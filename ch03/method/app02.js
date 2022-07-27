@@ -4,7 +4,7 @@ var fs = require('fs');
 http.createServer(function (request, response){
 
     if(request.method == 'GET') {
-        fs.readFile('test.html', function(error, data) {
+        fs.readFile('ch03/method/test.html', function(error, data) {
             // GET
             response.writeHead(200, {'Content-Type' : 'text/html'});
             response.end(data);
