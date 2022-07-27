@@ -1,0 +1,11 @@
+html 
+    head 
+        title Index Page 
+    body 
+        h1 #{name}! 
+        h2 = description
+        hr
+        - for(var i = 0; i < 10; i++){
+            p 
+                a(href = "https://www.e-mirim.hs.kr/main.do", data-test="multiple Attribute") mirim 여자정보과학고등학교 #{i}
+        }
