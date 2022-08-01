@@ -1,70 +1,98 @@
-// 모듈을 추출합니다.
-var fs = require('fs');
-var ejs = require('ejs');
-var mysql = require('mysql');
+//모듈 추출
+var mysql=require('mysql');
 var express = require('express');
+var ejs=require('ejs')
+var http = require('http')
 var bodyParser = require('body-parser');
+var fs=require('fs')
 
-// 데이터베이스와 연결합니다.
-var client = mysql.createConnection({
-  user: 'root',
-  password: '1111',
-  database: 'Company'
-});
-
-// 서버를 생성합니다.
+// 익스프레스 시작
 var app = express();
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
 
-// 서버를 실행합니다.
-app.listen(4444, function () {
-  console.log('server running at http://127.0.0.1:4444');
+// 바디파서 미들웨어 시작
+app.set('port', process.env.port || 4444)
+app.use(bodyParser.urlencoded({extended : false}));
+app.use(bodyParser.json());
+
+
+app.listen(4444,function(){
+    console.log('웹서버');
+
+})
+
+//데이터베이스와 연결
+var client=mysql.createConnection({
+    user : 'root',
+    password : 'mirim',
+    database : 'company'
 });
 
 
-// 라우트를 수행합니다.
-app.get('/', function (request, response) {
-  // 파일을 읽습니다.
-  fs.readFile('ch06/list.html', 'utf8', function (error, data) {
-    // 데이터베이스 쿼리를 실행합니다.
-    client.query('SELECT * FROM products', function (error, results) {
-      // 응답합니다.
-      response.send(ejs.render(data, {
-        data: results
-      }));
-    });
-  });
-});
-
-
-///// 데이터삭제 
+//Delete
 app.get('/delete/:id',function(req,res){
-    client.query('delete from products where id=?',[req.params.id],
-    function(){
-        res.redirect('/');
+  
+        client.query('delete from products where id=?', [req.params.id],
+        function(){
+            res.redirect('/');
+        });
+    });
+
+
+//Select
+app.get('/',function(req,res){
+   
+    //파일 읽기
+    fs.readFile('list.html','utf-8',function(err,data){
+        
+        //데이터 베이스 쿼리 실행
+        client.query('select * from products', function(err,result){
+            //응답
+            res.send(ejs.render(data,{
+                data : result
+            }));
+        });
+    });
+
+});
+
+//Insert
+app.get('/insert/',function(req,res){
+    fs.readFile('insert.html','utf-8',function(err,data){
+            res.send(data);
     });
 });
 
-///// 데이터 수정
-
-app.get('/update/:id', function (request, response) {
-    fs.readFile('ch06/update.html', 'utf8', function (error, data) {
-      client.query('SELECT * FROM products where id=?', [
-        request.params.id
-      ], function(err, result) {
-        response.send(ejs.render(data, {
-            data:result[0]
-        }));
-      })
+//Insert
+app.post('/insert/',function(req,res){
+        var body=req.body;
+        client.query('insert into products (name, modelnumber, series) values(?,?,?);', [body.name, body.modelnumber ,body.series],
+        function(){
+            res.redirect('/');
+        });
     });
-  });
+  
 
+
+//Update
+app.get('/update/:id',function(req,res){
+      fs.readFile('update.html','utf-8',function(err,data){
+        client.query('select * from products where id=?', [req.params.id],
+        function(err,result){
+            res.send(ejs.render(data,{
+                data : result[0]
+            }));
+        });
+    });
+});
+
+
+//Update
 app.post('/update/:id',function(req,res){
-    var body = req.body;
-    client.query('update products set name=?, modelnumber=?, series=? where id=?',[body.name, body.modelnumber, body.series, req.params.id],
-    function(){
+    fs.readFile('update.html','utf-8',function(err,data){
+        var body=req.body;
+      client.query('update products set name=?, modelnumber=?, series=? where id=?', [body.name, body.modelnumber ,body.series, req.params.id],
+      function(){
         res.redirect('/');
-    });
+      });
+  });
 });
