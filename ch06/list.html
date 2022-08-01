@@ -19,6 +19,7 @@
         <% data.forEach(function (item,index) { %>
             <tr>
                 <td><a href="/delete/<%= item.id %>">DELETE</a></td>
+                <td><a href="/update/<%= item.id %>">UPDATE</a></td>
                 <td><%= item.id %></td>
                 <td><%= item.name %></td>
                 <td><%= item.modelnumber %></td>

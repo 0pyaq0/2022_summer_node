@@ -46,3 +46,25 @@ app.get('/delete/:id',function(req,res){
         res.redirect('/');
     });
 });
+
+///// 데이터 수정
+
+app.get('/update/:id', function (request, response) {
+    fs.readFile('ch06/update.html', 'utf8', function (error, data) {
+      client.query('SELECT * FROM products where id=?', [
+        request.params.id
+      ], function(err, result) {
+        response.send(ejs.render(data, {
+            data:result[0]
+        }));
+      })
+    });
+  });
+
+app.post('/update/:id',function(req,res){
+    var body = req.body;
+    client.query('update products set name=?, modelnumber=?, series=? where id=?',[body.name, body.modelnumber, body.series, req.params.id],
+    function(){
+        res.redirect('/');
+    });
+});
