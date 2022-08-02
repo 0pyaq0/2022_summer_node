@@ -31,7 +31,7 @@ app.listen(4444, function(){
 
 app.get('/', function(req, res){
     
-    fs.readFile('Person_list.html', 'utf8', function(error, data){
+    fs.readFile('list.html', 'utf8', function(error, data){
         client.query('select * from person', function(err, result){
             res.send(ejs.render(data, {
                 data : result
@@ -48,7 +48,7 @@ app.get('/delete/:id', function(req, res){
 });
 
 app.get('/insert', function(req, res){
-    fs.readFile('Person_add.html', 'utf-8',function(error, data){
+    fs.readFile('add.html', 'utf-8',function(error, data){
         res.send(data);
     })
 });
@@ -62,7 +62,7 @@ app.post('/insert', function(req, res){
 });
 
 app.get('/update/:id', function(req, res){
-    fs.readFile('Person_update.html', 'utf8', function(error, data){
+    fs.readFile('update.html', 'utf8', function(error, data){
         client.query('select * from person where id = ?', [req.params.id], function(err, result){
             res.send(ejs.render(data, {
                 data : result[0]
